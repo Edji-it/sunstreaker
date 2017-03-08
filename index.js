@@ -44,7 +44,7 @@ app.use(function (req, res, next) {
     next()
 })
 
-app.post('/v1/convert-pdf', (req, res) => {
+app.put('/v1/convert-pdf', (req, res) => {
   console.log(req.body);
 })
 
