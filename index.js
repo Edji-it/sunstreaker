@@ -49,6 +49,7 @@ app.put('/v1/convert-pdf', (req, res) => {
         console.error(err)
     } else {
         console.log(stdout)
+        console.log("finished converting pdfs");
     }
     
     })
