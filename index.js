@@ -45,7 +45,14 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/convert-pdf', (req, res) => {
-  console.log(req.body);
+  im.convert(["-density", "144", "./content/pdf/lockheed.pdf", "./content/image/lockheed.jpg"], (err, stdout) => {
+    if (err) {
+        console.error(err)
+    } else {
+        console.log(stdout)
+    }
+    
+    })
 })
 
 app.listen(PORT, () => {
