@@ -55,5 +55,5 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.listen(PORT, () => {
-  console.log("Grapple listening on " + PORT)
+  console.log("Sunstreaker listening on " + PORT)
 })
