@@ -44,14 +44,17 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/convert-pdf', (req, res) => {
-  im.convert(["-density", "144", "./content/pdf/lockheed.pdf", "./content/image/lockheed.jpg"], (err, stdout) => {
+    res.status(204).send({ message: "we're working on it, alright?!" })
+
+    console.log("beginning image conversion")
+    im.convert(["-density", "144", "./content/pdf/lockheed.pdf", "./content/image/lockheed.jpg"], (err, stdout) => {
     if (err) {
         console.error(err)
     } else {
         console.log(stdout)
         console.log("finished converting pdfs");
     }
-    
+
     })
 })
 
