@@ -7,6 +7,8 @@ const app = express()
 
 const PORT = process.env.PORT || 4250
 
+let counter = 0
+
 app.use(bodyParser.json({limit: '10mb'}))
 
 // Access allowed for development (CORS stuff)
@@ -45,13 +47,14 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/convert-pdf', (req, res) => {
+    counter++
     if (req.body && req.body.pdf) {
         console.log("got that pdf tho");
     }
     res.status(202).send({ message: "we're working on it, alright?!" })
 
     console.log("beginning image conversion")
-    im.convert(["-density", "144", "./content/pdf/lockheed.pdf", "./../tmp/lockheed.jpg"], (err, stdout) => {
+    im.convert(["-density", "144", "./content/pdf/lockheed.pdf", `./../tmp/lockheed_${counter}.jpg`], (err, stdout) => {
     if (err) {
         console.error(err)
     } else {
