@@ -57,7 +57,7 @@ app.put('/v1/convert-pdf', (req, res) => {
     } else {
         console.log(stdout)
         console.log("finished converting pdfs");
-        fs.readFileSync("./../tmp", (err, files) => {
+        fs.readdir("./../tmp", (err, files) => {
             if (err) { console.error(err) }
             else { files.forEach((file) => {
                 console.log(file)
