@@ -12,7 +12,7 @@ const fs = require('fs')
 describe("PDF upload", () => {
   it("should PUT my pdf", (done) => {
     fs.readFile('./content/pdf/test.pdf', (err, data) => {
-      console.log(data)
+      // console.log(data)
       if (err) { console.error(err) }
       else {
         chai.request(server)
