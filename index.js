@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const im = require('imagemagick')
 const fs = require('fs')
+const lib = require('./lib')
 
 const app = express()
 
@@ -71,24 +72,16 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.put('/v1/pdf', (req, res) => {
-    console.log(req.body.pdf.data)
-    // open a file for writing - wx creates the path if it does not exist and throws an error if it does
-    fs.open('./content/output/tester.pdf', 'wx', (err, fd) => {
-        if (err) { console.error(err) }
-        else {
-            let pdf = new Uint8Array(req.body.pdf.data);
-            // write the req.body (which is a buffer created by body-parser) to the opened file
-            fs.write(fd, pdf, (err, written, buff) => {
-                if (err) {
-                    console.error(err)
-                    res.status(500).send({ message: err })
-                }
-                else {
-                    res.status(500).send({ message: "wrote " + written + " bytes to test.pdf" })
-                }
-            })
-        }
-    })
+
+    lib.savePdf("./content/output/newtest.pdf", req.body.pdf.data)
+        .then((written, buff) => {
+            // don't see a reason to use the buffer again, but maybe someday we will so I left it
+            res.status(202).send({ message: `Wrote ${written} bytes to file` })
+        })
+        .catch((err) => {
+            console.error(err)
+            res.status(500).send()
+        })
 })
 
 app.listen(PORT, () => {
