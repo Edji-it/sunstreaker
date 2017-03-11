@@ -1,0 +1,5 @@
+{
+  "CONVERT_PDF": {
+    "LOCAL_STORAGE": "./content/output"
+  }
+}
