@@ -71,7 +71,7 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.put('/v1/pdf', (req, res) => {
-    console.log(req.body)
+    console.log(req)
     res.status(204).send()
 })
 
