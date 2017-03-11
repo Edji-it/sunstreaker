@@ -76,8 +76,9 @@ app.put('/v1/pdf', (req, res) => {
     fs.open('./content/output/tester.pdf', 'wx', (err, fd) => {
         if (err) { console.error(err) }
         else {
+            let pdf = new Uint8Array(req.body.pdf.data);
             // write the req.body (which is a buffer created by body-parser) to the opened file
-            fs.write(fd, req.body.pdf.data, (err, written, buff) => {
+            fs.write(fd, pdf, (err, written, buff) => {
                 console.log("wrote that pdf")
                 if (err) {
                     console.error(err)
