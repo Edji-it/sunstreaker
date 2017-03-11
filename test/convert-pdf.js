@@ -11,17 +11,19 @@ const fs = require('fs')
 
 describe("PDF upload", () => {
   it("should PUT my pdf", (done) => {
-    fs.readFile('./content/pdf/lockheed.pdf', (err, res) => {
+    fs.readFile('./content/pdf/test.pdf', (err, data) => {
+      console.log(data)
       if (err) { console.error(err) }
       else {
         chai.request(server)
-          .put('/v1/convert-pdf')
-          .set('Content-Type', 'application/pdf')
-          .send({ pdf: res })
+          .put('/v1/pdf')
+          // .set('Content-Type', 'application/pdf')
+          .send({ pdf: data })
+          // .send({ pdf: "some text" })
           .end((err, res) => {
             console.log("got the res")
-            if (err) { console.error(err) }
-            else { console.log(res.body) }
+            // if (err) { console.error(err) }
+            // else { console.log(res.body) }
 
             done()
           })

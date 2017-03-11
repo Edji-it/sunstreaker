@@ -71,17 +71,28 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.put('/v1/pdf', (req, res) => {
-    console.log(req)
-    fs.write("test.pdf", req.body, (err, written, buff) => {
-        if (err) {
-            console.error(err)
-            res.status(500).send({ message: err })
-        }
+    // console.log(req)
+    // open a file for writing - wx creates the path if it does not exist and throws an error if it does
+    fs.open('./content/output/tester.pdf', 'wx', (err, fd) => {
+        if (err) { console.error(err) }
         else {
-            console.log("written:", written)
-            res.status(500).send({ message: "wrote " + written + " bytes to test.pdf" })
+            // write the req.body (which is a buffer created by body-parser) to the opened file
+            fs.write(fd, req.body, (err, written, buff) => {
+                console.log("wrote that pdf")
+                if (err) {
+                    console.error(err)
+                    res.status(500).send({ message: err })
+                }
+                else {
+                    console.log("written:", written)
+                    res.status(500).send({ message: "wrote " + written + " bytes to test.pdf" })
+                }
+            })
         }
     })
+
+
+
     
 })
 
