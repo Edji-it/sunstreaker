@@ -1,2 +1,4 @@
 node_modules
 .DS_Store
+content/output/img/*
+content/output/pdf/*

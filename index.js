@@ -78,16 +78,17 @@ app.put('/v1/pdf', (req, res) => {
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
+    console.log(req.body)
 
-    lib.savePdf(pdfPath, req.body.pdf)
+    lib.savePdf(pdfPath, req.body.pdf.data)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
-            console.log("successfully converted pdf")
+            console.log("successfully got pdf")
             im.convert([ "-density", "144", pdfPath, imgPath ], (err, stdout) => {
                 if (err) {
                     throw err // will be caught by catch
                 } else {
                     console.log("finished converting pdfs");
-                    res.status(202).send({ message: `Wrote ${written} bytes to file` })
+                    res.status(202).send({ message: `Wrote ${ written } bytes to file` })
                 }
             })
         })
