@@ -48,7 +48,7 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/convert-pdf', (req, res) => {
-    if (!req.body || !req.body.pdf) { res.status(400).send() }
+    // if (!req.body || !req.body.pdf) { res.status(400).send() }
     else { console.log("got that pdf tho"); }
     counter++
     res.status(202).send({ message: "we're working on it, alright?!" })
@@ -73,7 +73,7 @@ app.put('/v1/convert-pdf', (req, res) => {
 
 app.put('/v1/pdf', (req, res) => {
     console.log(req)
-    res.status(204).send()
+    res.status(202).send({ message: "we're working on it, alright?!" })
 })
 
 app.listen(PORT, () => {
