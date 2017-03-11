@@ -17,9 +17,7 @@ describe("PDF upload", () => {
       else {
         chai.request(server)
           .put('/v1/pdf')
-          // .set('Content-Type', 'application/pdf')
           .send({ pdf: data })
-          // .send({ pdf: "some text" })
           .end((err, res) => {
             console.log("got the res")
             // if (err) { console.error(err) }
