@@ -73,12 +73,16 @@ app.put('/v1/convert-pdf', (req, res) => {
 app.put('/v1/pdf', (req, res) => {
     console.log(req)
     fs.write("test.pdf", req.body, (err, written, buff) => {
-        if (err) { console.error(err) }
+        if (err) {
+            console.error(err)
+            res.status(500).send({ message: err })
+        }
         else {
             console.log("written:", written)
+            res.status(500).send({ message: "wrote " + written + " bytes to test.pdf" })
         }
     })
-    res.status(202).send({ message: "we're working on it, alright?!" })
+    
 })
 
 app.listen(PORT, () => {
