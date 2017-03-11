@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 4250
 let counter = 0
 
 app.use(bodyParser.json({limit: '10mb'}))
+app.use(bodyParser.raw({ limit: '2mb', type: 'application/pdf' }))
 
 // Access allowed for development (CORS stuff)
 app.use(function (req, res, next) {
