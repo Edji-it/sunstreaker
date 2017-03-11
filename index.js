@@ -1,8 +1,9 @@
 const express = require('express')
+const fs = require('fs')
 const bodyParser = require('body-parser')
+const config = require('config')
 const im = require('imagemagick')
 const uuid = require('uuid')
-const fs = require('fs')
 const lib = require('./lib')
 
 const app = express()
@@ -11,7 +12,7 @@ const PORT = process.env.PORT || 4250
 
 let counter = 0
 
-app.use(bodyParser.json({limit: '500kb'}))
+app.use(bodyParser.json({ limit: '500kb' }))
 app.use(bodyParser.raw({ limit: '10mb', type: 'application/pdf' }))
 
 // Access allowed for development (CORS stuff)
@@ -73,7 +74,7 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.put('/v1/pdf', (req, res) => {
-    let savePath = './content/output'
+    let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
