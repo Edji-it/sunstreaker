@@ -70,6 +70,11 @@ app.put('/v1/convert-pdf', (req, res) => {
     })
 })
 
+app.put('/v1/pdf', (req, res) => {
+    console.log(req.body)
+    res.status(204).send()
+})
+
 app.listen(PORT, () => {
   console.log("Sunstreaker listening on " + PORT)
 })
