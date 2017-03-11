@@ -49,7 +49,7 @@ app.use(function (req, res, next) {
 
 app.put('/v1/convert-pdf', (req, res) => {
     // if (!req.body || !req.body.pdf) { res.status(400).send() }
-    else { console.log("got that pdf tho"); }
+    // else { console.log("got that pdf tho"); }
     counter++
     res.status(202).send({ message: "we're working on it, alright?!" })
 
