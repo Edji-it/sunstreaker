@@ -79,22 +79,16 @@ app.put('/v1/pdf', (req, res) => {
             let pdf = new Uint8Array(req.body.pdf.data);
             // write the req.body (which is a buffer created by body-parser) to the opened file
             fs.write(fd, pdf, (err, written, buff) => {
-                console.log("wrote that pdf")
                 if (err) {
                     console.error(err)
                     res.status(500).send({ message: err })
                 }
                 else {
-                    console.log("written:", written)
                     res.status(500).send({ message: "wrote " + written + " bytes to test.pdf" })
                 }
             })
         }
     })
-
-
-
-    
 })
 
 app.listen(PORT, () => {
