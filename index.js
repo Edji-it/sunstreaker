@@ -47,20 +47,19 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/convert-pdf', (req, res) => {
+    if (!req.body || !req.body.pdf) { res.status(400).send() }
+    else { console.log("got that pdf tho"); }
     counter++
-    if (req.body && req.body.pdf) {
-        console.log("got that pdf tho");
-    }
     res.status(202).send({ message: "we're working on it, alright?!" })
 
     console.log("beginning image conversion")
-    im.convert(["-density", "144", "./content/pdf/lockheed.pdf", `./../tmp/lockheed_${counter}.jpg`], (err, stdout) => {
+    im.convert(["-density", "144", "./content/pdf/test.pdf", `./tmp/test_${counter}.jpg`], (err, stdout) => {
     if (err) {
         console.error(err)
     } else {
         console.log(stdout)
         console.log("finished converting pdfs");
-        fs.readdir("./../tmp", (err, files) => {
+        fs.readdir("./tmp", (err, files) => {
             if (err) { console.error(err) }
             else { files.forEach((file) => {
                 console.log(file)
@@ -74,3 +73,5 @@ app.put('/v1/convert-pdf', (req, res) => {
 app.listen(PORT, () => {
   console.log("Sunstreaker listening on " + PORT)
 })
+
+module.exports = app
