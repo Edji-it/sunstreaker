@@ -55,24 +55,29 @@ app.put('/v1/convert-pdf', (req, res) => {
 
     console.log("beginning image conversion")
     im.convert(["-density", "144", "./content/pdf/test.pdf", `./tmp/test_${counter}.jpg`], (err, stdout) => {
-    if (err) {
-        console.error(err)
-    } else {
-        console.log(stdout)
-        console.log("finished converting pdfs");
-        fs.readdir("./tmp", (err, files) => {
-            if (err) { console.error(err) }
-            else { files.forEach((file) => {
-                console.log(file)
-            })}
-        })
-    }
-
+        if (err) {
+            console.error(err)
+        } else {
+            console.log(stdout)
+            console.log("finished converting pdfs");
+            fs.readdir("./tmp", (err, files) => {
+                if (err) { console.error(err) }
+                else { files.forEach((file) => {
+                    console.log(file)
+                })}
+            })
+        }
     })
 })
 
 app.put('/v1/pdf', (req, res) => {
     console.log(req)
+    fs.write("test.pdf", req.body, (err, written, buff) => {
+        if (err) { console.error(err) }
+        else {
+            console.log("written:", written)
+        }
+    })
     res.status(202).send({ message: "we're working on it, alright?!" })
 })
 
