@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const im = require('imagemagick')
+const uuid = require('uuid')
 const fs = require('fs')
 const lib = require('./lib')
 
@@ -72,15 +73,25 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.put('/v1/pdf', (req, res) => {
+    let savePath = './content/output'
+    let fileName = uuid.v4()
+    let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
+    let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
 
-    lib.savePdf("./content/output/newtest.pdf", req.body.pdf.data)
-        .then((written, buff) => {
-            // don't see a reason to use the buffer again, but maybe someday we will so I left it
-            res.status(202).send({ message: `Wrote ${written} bytes to file` })
+    lib.savePdf(pdfPath, req.body.pdf.data)
+        .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
+            im.convert([ "-density", "144", pdfPath, imgPath ], (err, stdout) => {
+                if (err) {
+                    throw err // will be caught by catch
+                } else {
+                    console.log("finished converting pdfs");
+                    res.status(202).send({ message: `Wrote ${written} bytes to file` })
+                }
+            })
         })
         .catch((err) => {
             console.error(err)
-            res.status(500).send()
+            res.status(500).send(err)
         })
 })
 
