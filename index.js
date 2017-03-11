@@ -78,9 +78,8 @@ app.put('/v1/pdf', (req, res) => {
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
-    console.log(req.body)
 
-    lib.savePdf(pdfPath, req.body.pdf.data)
+    lib.savePdf(pdfPath, req.body.pdf)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
             im.convert([ "-density", "144", pdfPath, imgPath ], (err, stdout) => {
                 if (err) {
