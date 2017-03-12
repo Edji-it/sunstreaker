@@ -80,7 +80,19 @@ app.put('/v1/pdf', (req, res) => {
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
     console.log(req.body)
 
-    lib.savePdf(pdfPath, req.body.pdf.data)
+    if (!req.body && req.body) {
+        res.status(400).send()
+        return
+    }
+
+    let pdfData
+    if (!config.util.getEnv('NODE_ENV') != "production") {
+        pdfData = req.body.pdf.data
+    } else {
+        pdfData = req.body
+    }
+
+    lib.savePdf(pdfPath, pdfData)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
             console.log("successfully got pdf")
             im.convert([ "-density", "144", pdfPath, imgPath ], (err, stdout) => {
