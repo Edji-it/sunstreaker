@@ -79,6 +79,7 @@ app.put('/v1/pdf', (req, res) => {
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
     console.log(req.body)
+    console.log(config.util.getEnv('NODE_ENV'))
 
     if (!req.body && req.body) {
         res.status(400).send()
@@ -87,7 +88,7 @@ app.put('/v1/pdf', (req, res) => {
 
     let pdfData
     if (!config.util.getEnv('NODE_ENV') != "production") {
-        pdfData = req.body.pdf.data
+        pdfData = req.body.data
     } else {
         pdfData = req.body
     }

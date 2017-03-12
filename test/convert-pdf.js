@@ -12,7 +12,7 @@ const fs = require('fs')
 describe("PDF upload", () => {
   it("should PUT my pdf", (done) => {
     fs.readFile('./content/pdf/test.pdf', (err, data) => {
-      let pdfData = { pdf: data }
+      let pdfData = data 
       // console.log(pdfData)
       // console.log(data)
       if (err) { console.error(err) }
