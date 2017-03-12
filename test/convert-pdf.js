@@ -2,7 +2,9 @@
 const chai = require("chai")
 const chaiHttp = require("chai-http")
 const should = chai.should()
-const server = require('./../index.js')
+// const server = require('./../index.js')
+const config = require('config')
+const server = config.get("Testing.url")
 
 chai.use(chaiHttp)
 

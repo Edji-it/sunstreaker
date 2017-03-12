@@ -4,10 +4,11 @@ const bodyParser = require('body-parser')
 const config = require('config')
 const im = require('imagemagick')
 const uuid = require('uuid')
+const aws = require('aws-sdk')
 const lib = require('./lib')
 
+aws.config.update({region: 'us-west-2'}) // update the aws region we're referencing
 const app = express()
-
 const PORT = process.env.PORT || 4250
 
 let counter = 0
@@ -86,6 +87,8 @@ app.put('/v1/pdf', (req, res) => {
         res.status(400).send()
         return
     }
+
+    console.log(config.util.getEnv('NODE_ENV'))
 
     let pdfData = req.body
 
