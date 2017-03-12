@@ -13,7 +13,9 @@ const PORT = process.env.PORT || 4250
 let counter = 0
 
 app.use(bodyParser.json({ limit: '500kb' }))
-app.use(bodyParser.raw({ limit: '10mb', type: 'application/pdf' }))
+app.use(bodyParser.raw({ limit: '10mb', type: 'application/pdf', verify: (req, res, buf, encoding) => {
+    console.log(buf)
+} }))
 
 // Access allowed for development (CORS stuff)
 app.use(function (req, res, next) {
@@ -78,20 +80,25 @@ app.put('/v1/pdf', (req, res) => {
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
-    console.log(req.body)
-    console.log(config.util.getEnv('NODE_ENV'))
+    // console.log(req.body)
+    // console.log("trying to parse it")
+    // console.log(JSON.parse(req.body))
+    // console.log("got 'er done")
 
     if (!req.body && req.body) {
         res.status(400).send()
         return
     }
 
-    let pdfData
-    if (!config.util.getEnv('NODE_ENV') != "production") {
-        pdfData = req.body.data
-    } else {
-        pdfData = req.body
-    }
+    // let pdfData
+    // if (!config.util.getEnv('NODE_ENV') != "production") {
+    //     pdfData = req.body.data
+    // } else {
+    //     pdfData = req.body
+    // }
+    let pdfData = JSON.parse(req.body.toString())
+
+    // console.log(pdfData)
 
     lib.savePdf(pdfPath, pdfData)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
