@@ -76,8 +76,10 @@ app.put('/v1/convert-pdf', (req, res) => {
 app.put('/v1/pdf', (req, res) => {
     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
     let fileName = uuid.v4()
-    let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
-    let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
+    // let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
+    // let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
+    let pdfPath = [ savePath, fileName ].join("/") + ".pdf"
+    let imgPath = [ savePath, fileName ].join("/") + ".jpg"
     console.log(req.body)
 
     if (!req.body && req.body) {
