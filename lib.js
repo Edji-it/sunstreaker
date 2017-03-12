@@ -17,8 +17,8 @@ module.exports = {
                   else {
 
                       fs.exists(loc, (exists) => {
-                          console.log(exists ? "It exists!" : "No dice")
-                          resolve(written, buff)
+                          if (exists) { resolve(written, buff) }
+                          else { reject("File was not created") }
                       })
                   }
               })
