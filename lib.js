@@ -15,7 +15,11 @@ module.exports = {
                       reject(err)
                   }
                   else {
-                      resolve(written, buff)
+
+                      fs.exists(loc, (exists) => {
+                          console.log(exists ? "It exists!" : "No dice")
+                          resolve(written, buff)
+                      })
                   }
               })
           }
