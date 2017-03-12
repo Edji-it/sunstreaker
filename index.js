@@ -122,7 +122,7 @@ app.put('/v1/pdf', (req, res) => {
                     throw err // will be caught by catch
                 } else {
                     console.log("finished converting pdfs");
-                    fs.readdir("./tmp", (err, files) => {
+                    fs.readdir([savePath, "img"].join("/"), (err, files) => {
                         if (err) { console.error(err) }
                         else { files.forEach((file) => {
                             console.log(file)
