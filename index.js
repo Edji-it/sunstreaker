@@ -79,21 +79,12 @@ app.put('/v1/pdf', (req, res) => {
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
     console.log(req.body)
-    // console.log("trying to parse it")
-    // console.log(JSON.parse(req.body))
-    // console.log("got 'er done")
 
     if (!req.body && req.body) {
         res.status(400).send()
         return
     }
 
-    // let pdfData
-    // if (!config.util.getEnv('NODE_ENV') != "production") {
-    //     pdfData = req.body.data
-    // } else {
-    //     pdfData = req.body
-    // }
     let pdfData = req.body
 
     // console.log(pdfData)
