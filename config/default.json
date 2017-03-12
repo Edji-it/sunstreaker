@@ -1,5 +1,5 @@
 {
   "CONVERT_PDF": {
-    "LOCAL_STORAGE": "./content/output"
+    "LOCAL_STORAGE": "./content/pdf_convert"
   }
 }
