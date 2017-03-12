@@ -8,6 +8,7 @@ module.exports = {
           if (err) { console.error(err) }
           else {
               let pdf = new Uint8Array(buff)
+              console.log("pdf", pdf)
               // write the req.body (which is a buffer created by body-parser) to the opened file
               fs.write(fd, pdf, (err, written, buff) => {
                   if (err) {

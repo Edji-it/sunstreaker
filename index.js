@@ -13,9 +13,7 @@ const PORT = process.env.PORT || 4250
 let counter = 0
 
 app.use(bodyParser.json({ limit: '500kb' }))
-app.use(bodyParser.raw({ limit: '10mb', type: 'application/pdf', verify: (req, res, buf, encoding) => {
-    console.log(buf)
-} }))
+app.use(bodyParser.raw({ limit: '10mb', type: 'application/pdf' }))
 
 // Access allowed for development (CORS stuff)
 app.use(function (req, res, next) {
@@ -80,7 +78,7 @@ app.put('/v1/pdf', (req, res) => {
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
-    // console.log(req.body)
+    console.log(req.body)
     // console.log("trying to parse it")
     // console.log(JSON.parse(req.body))
     // console.log("got 'er done")
@@ -96,7 +94,7 @@ app.put('/v1/pdf', (req, res) => {
     // } else {
     //     pdfData = req.body
     // }
-    let pdfData = JSON.parse(req.body.toString())
+    let pdfData = req.body
 
     // console.log(pdfData)
 
