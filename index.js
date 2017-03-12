@@ -77,24 +77,15 @@ app.put('/v1/convert-pdf', (req, res) => {
 app.put('/v1/pdf', (req, res) => {
     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
     let fileName = uuid.v4()
-    // let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
-    // let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
-    let pdfPath = [ savePath, fileName ].join("/") + ".pdf"
-    let imgPath = [ savePath, fileName ].join("/") + ".jpg"
-    console.log(req.body)
+    let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
+    let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
 
     if (!req.body && req.body) {
         res.status(400).send()
         return
     }
 
-    console.log(config.util.getEnv('NODE_ENV'))
-
-    let pdfData = req.body
-
-    // console.log(pdfData)
-
-    lib.savePdf(pdfPath, pdfData)
+    lib.savePdf(pdfPath, req.body)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
             console.log("successfully got pdf")
             im.convert([ "-density", "72", pdfPath, imgPath ], (err, stdout) => {
