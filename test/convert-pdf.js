@@ -12,7 +12,7 @@ chai.use(chaiHttp)
 const fs = require('fs')
 
 describe("PDF upload", () => {
-  it("should PUT my pdf", (done) => {
+  it("should PUT a single-page pdf", (done) => {
     fs.readFile('./test/pdf/test.pdf', (err, data) => {
 
       if (err) { console.error(err) }
@@ -22,12 +22,33 @@ describe("PDF upload", () => {
           .set('Content-Type', 'application/pdf')
           .send(data)
           .end((err, res) => {
-            console.log("got the res")
-            console.log(res.body)
             res.should.have.status(201)
+            res.body.should.not.have.property("errors")
             res.body.should.have.property("pages")
             res.body.pages.should.be.instanceOf(Array)
             res.body.pages.length.should.be.equal(1)
+
+            done()
+          })
+      }
+    })
+  })
+
+  it("should not PUT a single-page pdf without application/pdf header", (done) => {
+    fs.readFile('./test/pdf/test.pdf', (err, data) => {
+
+      if (err) { console.error(err) }
+      else {
+        chai.request(server)
+          .put('/v1/pdf')
+          // .set('Content-Type', 'application/pdf') // 
+          .send(data)
+          .end((err, res) => {
+            res.should.have.status(400)
+            res.body.should.have.property("errors")
+            res.body.should.not.have.property("pages")
+            res.body.errors.should.have.property("typeError")
+            res.body.errors.typeError.should.be.a("string")
 
             done()
           })
