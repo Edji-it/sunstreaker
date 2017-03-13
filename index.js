@@ -110,8 +110,12 @@ app.put('/v1/pdf', (req, res) => {
                                         Key: awsPath,
                                         Body: imgData,
                                         ACL: 'public-read'
-                                    }, (res) => {
-                                        console.log("s3 response: ", res)
+                                    }, (err, data) => {
+                                        if (err) {
+                                            throw err
+                                        } else {
+                                            console.log(data)
+                                        }
                                     })
                                 })
 
