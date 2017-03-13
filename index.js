@@ -151,6 +151,10 @@ app.put('/v1/pdf', (req, res) => {
         .then((promises) => {
             Q.all(promises).done((files) => {
                 res.status(202).send({ pages: files })
+                // also clean up the pdf - now we should have cleaned out all the saved images and the pdf
+                fs.unlink(pdfPath, (err) => {
+                    if (err) { console.error(err) }
+                })
             })
         })
         .catch((err) => {
