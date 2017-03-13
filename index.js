@@ -58,6 +58,10 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/pdf', (req, res) => {
+    if (!req.headers['Content-Type'] || req.headers['Content-Type'] === "application/pdf") {
+        return res.status(400).send({ errors: { typeError: "Content-Type not set to application/pdf" } })
+    }
+
     const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
     let fileName = uuid.v4()
