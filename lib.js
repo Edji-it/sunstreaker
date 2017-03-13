@@ -10,7 +10,6 @@ module.exports = {
             // let pdf = new Uint8Array(buff)
             pdf = buff
             console.log("pdf", pdf)
-            console.log(fs)
             // write the req.body (which is a buffer created by body-parser) to the opened file
             fs.write(fd, pdf, (err, written, buff) => {
                 console.log("we are done reading the file")
