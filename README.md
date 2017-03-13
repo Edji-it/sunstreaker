@@ -52,6 +52,8 @@ Testing is automatid with Mocha, and run with Yarn scripts.
 
 ### Run the test suite against a local instance of the server
 
+In order to accomplish this, you must first have a copy of the AWS keys locally, in the root of the project. The file should be named `.aws-keys.json` and have properties `accessKeyId` and `secretAccessKey`
+
 Run the server from a terminal. From another terminal, run
 ```bash
 yarn test

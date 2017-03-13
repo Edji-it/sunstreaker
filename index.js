@@ -58,7 +58,10 @@ app.use(function (req, res, next) {
 })
 
 app.put('/v1/pdf', (req, res) => {
-    if (!req.headers['Content-Type'] || req.headers['Content-Type'] === "application/pdf") {
+
+    // the process will crash if the server tries assuming application/json
+    let contentType = req.headers['Content-Type'] || req.headers['content-type']
+    if (!contentType || contentType.toLowerCase() !== "application/pdf") {
         return res.status(400).send({ errors: { typeError: "Content-Type not set to application/pdf" } })
     }
 
