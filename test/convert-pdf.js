@@ -13,7 +13,7 @@ const fs = require('fs')
 
 describe("PDF upload", () => {
   it("should PUT my pdf", (done) => {
-    fs.readFile('./content/pdf/test.pdf', (err, data) => {
+    fs.readFile('./test/pdf/test.pdf', (err, data) => {
 
       if (err) { console.error(err) }
       else {
@@ -24,8 +24,10 @@ describe("PDF upload", () => {
           .end((err, res) => {
             console.log("got the res")
             console.log(res.body)
-            // if (err) { console.error(err) }
-            // else { console.log(res.body) }
+            res.should.have.status(201)
+            res.body.should.have.property("pages")
+            res.body.pages.should.be.instanceOf(Array)
+            res.body.pages.length.should.be.equal(1)
 
             done()
           })
