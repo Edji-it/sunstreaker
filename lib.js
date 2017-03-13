@@ -16,7 +16,7 @@ module.exports = {
                     reject(err)
                 } else {
                     console.log("testing " + loc)
-                    fs.exists("./corbin", (exists) => {
+                    fs.exists(loc, (exists) => {
                         if (exists) {
                             console.log(loc + " exists")
                             resolve(written, buff)
