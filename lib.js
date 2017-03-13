@@ -7,16 +7,11 @@ module.exports = {
       fs.open(loc, 'wx', (err, fd) => {
         if (err) { console.error(err) }
         else {
-            // let pdf = new Uint8Array(buff)
-            pdf = buff
-            console.log("pdf", pdf)
             // write the req.body (which is a buffer created by body-parser) to the opened file
-            fs.write(fd, pdf, (err, written, buff) => {
-                console.log("we are done reading the file")
+            fs.write(fd, buff, (err, written, buff) => {
                 if (err) {
                     reject(err)
                 } else {
-                    console.log("testing " + loc)
                     fs.exists(loc, (exists) => {
                         if (exists) {
                             console.log(loc + " exists")

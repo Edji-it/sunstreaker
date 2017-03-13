@@ -87,12 +87,17 @@ app.put('/v1/pdf', (req, res) => {
 
     lib.savePdf(pdfPath, req.body)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
-            console.log("successfully got pdf")
             im.convert([ "-density", "72", pdfPath, imgPath ], (err, stdout) => {
                 if (err) {
                     throw err // will be caught by catch
                 } else {
-                    console.log("finished converting pdfs");
+                    console.log("finished converting pdfs")
+                    fs.readdir([savePath, "img"].join("/"), (err, files) => {
+                        if (err) { console.error(err) }
+                        else { files.forEach((file) => {
+                            console.log(file)
+                        })}
+                    })
                     res.status(202).send({ message: `Wrote ${ written } bytes to file` })
                 }
             })
