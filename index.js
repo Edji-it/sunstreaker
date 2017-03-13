@@ -135,6 +135,7 @@ app.put('/v1/pdf', (req, res) => {
                                         reject(err)
                                     } else {
                                         resolve(`//${S3_BUCKET}/${awsPath}`)
+                                        // clean up the files
                                         fs.unlink([ pathToImgs, file ].join("/"), (err) => {
                                             if (err) { console.error(err) }
                                         })
@@ -149,7 +150,7 @@ app.put('/v1/pdf', (req, res) => {
         })
         .then((promises) => {
             Q.all(promises).done((files) => {
-                res.status(202).send({ pageUrls: files })
+                res.status(202).send({ pages: files })
             })
         })
         .catch((err) => {
