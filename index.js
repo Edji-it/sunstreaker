@@ -77,7 +77,7 @@ app.put('/v1/pdf', (req, res) => {
     lib.savePdf(pdfPath, req.body)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
             return new Promise((resolve, reject) => {
-                im.convert([ "-density", "72", pdfPath, imgPath ], (err, stdout) => {
+                im.convert([ "-density", "144", pdfPath, imgPath ], (err, stdout) => {
                     if (err) {
                         reject(err) // will be caught by .catch
                     } else {
