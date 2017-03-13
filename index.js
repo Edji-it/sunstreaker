@@ -91,13 +91,13 @@ app.put('/v1/pdf', (req, res) => {
                 if (err) {
                     throw err // will be caught by catch
                 } else {
-                    console.log("finished converting pdfs")
-                    fs.readdir([savePath, "img"].join("/"), (err, files) => {
-                        if (err) { console.error(err) }
-                        else { files.forEach((file) => {
-                            console.log(file)
-                        })}
-                    })
+                    // console.log("finished converting pdfs")
+                    // fs.readdir([savePath, "img"].join("/"), (err, files) => {
+                    //     if (err) { console.error(err) }
+                    //     else { files.forEach((file) => {
+                    //         console.log(file)
+                    //     })}
+                    // })
                     res.status(202).send({ message: `Wrote ${ written } bytes to file` })
                 }
             })
@@ -107,41 +107,6 @@ app.put('/v1/pdf', (req, res) => {
             res.status(500).send(err)
         })
 })
-
-// app.put('/v1/pdf', (req, res) => {
-//     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
-//     let fileName = uuid.v4()
-//     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
-//     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
-
-//     if (!req.body && req.body) {
-//         res.status(400).send()
-//         return
-//     }
-
-//     lib.savePdf(pdfPath, req.body)
-//         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
-//             console.log("successfully got pdf")
-//             im.convert(["-density", "144", "./content/pdf/test.pdf", imgPath], (err, stdout) => {
-//                 if (err) {
-//                     throw err // will be caught by catch
-//                 } else {
-//                     console.log("finished converting pdfs");
-//                     fs.readdir([savePath, "img"].join("/"), (err, files) => {
-//                         if (err) { console.error(err) }
-//                         else { files.forEach((file) => {
-//                             console.log(file)
-//                         })}
-//                     })
-//                     res.status(202).send({ message: `Wrote ${ written } bytes to file` })
-//                 }
-//             })
-//         })
-//         .catch((err) => {
-//             console.error(err)
-//             res.status(500).send(err)
-//         })
-// })
 
 app.listen(PORT, () => {
   console.log("Sunstreaker listening on " + PORT)
