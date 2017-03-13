@@ -9,6 +9,9 @@ const Q = require('q')
 const lib = require('./lib')
 
 aws.config.update({ region: 'us-west-2' }) // update the aws region we're referencing
+if (process.env.NODE_ENV !== "production") {
+    aws.config.loadFromPath('./.aws-keys.json')
+}
 
 const S3_BUCKET = process.env.S3_BUCKET || "image-dev.edji.it"
 const app = express()
@@ -115,11 +118,10 @@ app.put('/v1/pdf', (req, res) => {
             // console.log(files)
             let promises = []
             files.forEach((file) => {
-                promises.push(
-                    new Promise((resolve, reject) => {
-                        // test if the file is one of the ones created by this call by checking the name
-                        if (file.substr(0, fileName.length) === fileName) {
-                            console.log(file)
+                // test if the file is one of the ones created by this call by checking the name
+                if (file.substr(0, fileName.length) === fileName) {
+                    promises.push(
+                        new Promise((resolve, reject) => {
                             // read the file into a buffer
                             fs.readFile([ pathToImgs, file ].join("/"), (err, imgData) => {
                                 let awsPath = `pdf/${fileName}/${file}` // where we will save the image in s3
@@ -132,21 +134,19 @@ app.put('/v1/pdf', (req, res) => {
                                     if (err) {
                                         reject(err)
                                     } else {
-                                        resolve(awsPath)
+                                        resolve(`//${S3_BUCKET}/${awsPath}`)
                                     }
                                 })
-                            })
-                        }
-                    })
-                )
+                            }) 
+                        })
+                    )
+                }
             })
             return promises
         })
         .then((promises) => {
-            console.log("got the promises")
-            Promise.all(promises).then((files) => {
-                console.log(files)
-                res.status(202).send(files)
+            Q.all(promises).done((files) => {
+                res.status(202).send({ pageUrls: files })
             })
         })
         .catch((err) => {
