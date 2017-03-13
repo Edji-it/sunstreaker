@@ -5,6 +5,7 @@ const config = require('config')
 const im = require('imagemagick')
 const uuid = require('uuid')
 const aws = require('aws-sdk')
+const Q = require('q')
 const lib = require('./lib')
 
 aws.config.update({ region: 'us-west-2' }) // update the aws region we're referencing
@@ -91,40 +92,64 @@ app.put('/v1/pdf', (req, res) => {
 
     lib.savePdf(pdfPath, req.body)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
-            im.convert([ "-density", "72", pdfPath, imgPath ], (err, stdout) => {
-                if (err) {
-                    throw err // will be caught by .catch
-                } else {
-                    // read the files in the img directory
-                    fs.readdir([savePath, "img"].join("/"), (err, files) => {
-                        if (err) { throw err }
-                        else { files.forEach((file) => {
-                            // test if the file is one of the ones created by this call by checking the name
-                            if (file.substr(0, fileName.length) === fileName) {
-                                console.log(file)
-                                // read the file into a buffer
-                                fs.readFile([ pathToImgs, file ].join("/"), (err, imgData) => {
-                                    let awsPath = `pdf/${fileName}/${file}` // where we will save the image in s3
-                                    s3.putObject({
-                                        Bucket: S3_BUCKET,
-                                        Key: awsPath,
-                                        Body: imgData,
-                                        ACL: 'public-read'
-                                    }, (err, data) => {
-                                        if (err) {
-                                            throw err
-                                        } else {
-                                            console.log(data)
-                                        }
-                                    })
+            return new Promise((resolve, reject) => {
+                im.convert([ "-density", "72", pdfPath, imgPath ], (err, stdout) => {
+                    if (err) {
+                        reject(err) // will be caught by .catch
+                    } else {
+                        resolve()
+                    }
+                })
+            })
+        })
+        .then(() => {
+            return new Promise((resolve, reject) => {
+                // read the files in the img directory
+                fs.readdir([savePath, "img"].join("/"), (err, files) => {
+                    if (err) { reject(err) }
+                    else { resolve(files) }
+                })
+            })
+        })
+        .then((files) => {
+            // console.log(files)
+            let promises = []
+            files.forEach((file) => {
+                promises.push(
+                    new Promise((resolve, reject) => {
+                        console.log("running promise")
+                        console.log(file.substr(0, fileName.length))
+                        console.log(fileName)
+                        // test if the file is one of the ones created by this call by checking the name
+                        if (file.substr(0, fileName.length) === fileName) {
+                            console.log(file)
+                            // read the file into a buffer
+                            fs.readFile([ pathToImgs, file ].join("/"), (err, imgData) => {
+                                let awsPath = `pdf/${fileName}/${file}` // where we will save the image in s3
+                                s3.putObject({
+                                    Bucket: S3_BUCKET,
+                                    Key: awsPath,
+                                    Body: imgData,
+                                    ACL: 'public-read'
+                                }, (err, data) => {
+                                    if (err) {
+                                        reject(err)
+                                    } else {
+                                        console.log(awsPath)
+                                        resolve(awsPath)
+                                    }
                                 })
-
-                            }
-                        })}
+                            })
+                        }
                     })
-
-                    res.status(202).send({ message: `Wrote ${ written } bytes to file` })
-                }
+                )
+            })
+            return promises
+        })
+        .then((promises) => {
+            Q.all(promises).done((files) => {
+                console.log(files[0])
+                res.status(202).send(files)
             })
         })
         .catch((err) => {
