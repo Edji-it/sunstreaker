@@ -8,6 +8,8 @@ const aws = require('aws-sdk')
 const lib = require('./lib')
 
 aws.config.update({region: 'us-west-2'}) // update the aws region we're referencing
+const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
+const S3_BUCKET = process.env.S3_BUCKET || "image-dev.edji.it"
 const app = express()
 const PORT = process.env.PORT || 4250
 
@@ -79,6 +81,7 @@ app.put('/v1/pdf', (req, res) => {
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
+    let pathToImgs = [ savePath, "img" ].join("/")
 
     if (!req.body && req.body) {
         res.status(400).send()
@@ -89,15 +92,32 @@ app.put('/v1/pdf', (req, res) => {
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
             im.convert([ "-density", "72", pdfPath, imgPath ], (err, stdout) => {
                 if (err) {
-                    throw err // will be caught by catch
+                    throw err // will be caught by .catch
                 } else {
-                    // console.log("finished converting pdfs")
-                    // fs.readdir([savePath, "img"].join("/"), (err, files) => {
-                    //     if (err) { console.error(err) }
-                    //     else { files.forEach((file) => {
-                    //         console.log(file)
-                    //     })}
-                    // })
+                    // read the files in the img directory
+                    fs.readdir([savePath, "img"].join("/"), (err, files) => {
+                        if (err) { throw err }
+                        else { files.forEach((file) => {
+                            // test if the file is one of the ones created by this call by checking the name
+                            if (file.substr(0, fileName.length) === fileName) {
+                                console.log(file)
+                                // read the file into a buffer
+                                fs.readFile([ pathToImgs, file ].join("/"), (err, imgData) => {
+                                    let awsPath = `pdf/${fileName}/${file}` // where we will save the image in s3
+                                    s3.putObject({
+                                        Bucket: S3_BUCKET,
+                                        Key: awsPath,
+                                        Body: imgData,
+                                        ACL: 'public-read'
+                                    }, (res) => {
+                                        console.log(res)
+                                    })
+                                })
+
+                            }
+                        })}
+                    })
+
                     res.status(202).send({ message: `Wrote ${ written } bytes to file` })
                 }
             })
