@@ -1,6 +1,6 @@
 {
   "name": "sunstreaker",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "An image master",
   "main": "index.js",
   "scripts": {
