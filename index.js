@@ -148,7 +148,7 @@ app.put('/v1/pdf', (req, res) => {
         })
         .then((promises) => {
             Q.all(promises).done((files) => {
-                console.log(files[0])
+                console.log(files)
                 res.status(202).send(files)
             })
         })
