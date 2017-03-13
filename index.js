@@ -57,29 +57,6 @@ app.use(function (req, res, next) {
     next()
 })
 
-app.put('/v1/convert-pdf', (req, res) => {
-    // if (!req.body || !req.body.pdf) { res.status(400).send() }
-    // else { console.log("got that pdf tho"); }
-    counter++
-    res.status(202).send({ message: "we're working on it, alright?!" })
-
-    console.log("beginning image conversion")
-    im.convert(["-density", "144", "./content/pdf/test.pdf", `./tmp/test_${counter}.jpg`], (err, stdout) => {
-        if (err) {
-            console.error(err)
-        } else {
-            console.log(stdout)
-            console.log("finished converting pdfs");
-            fs.readdir("./tmp", (err, files) => {
-                if (err) { console.error(err) }
-                else { files.forEach((file) => {
-                    console.log(file)
-                })}
-            })
-        }
-    })
-})
-
 app.put('/v1/pdf', (req, res) => {
     const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
