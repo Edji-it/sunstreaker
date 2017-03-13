@@ -111,7 +111,7 @@ app.put('/v1/pdf', (req, res) => {
                                         Body: imgData,
                                         ACL: 'public-read'
                                     }, (res) => {
-                                        console.log(res)
+                                        console.log("s3 response: ", res)
                                     })
                                 })
 
