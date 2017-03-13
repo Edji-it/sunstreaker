@@ -9,6 +9,8 @@ const lib = require('./lib')
 
 aws.config.update({region: 'us-west-2'}) // update the aws region we're referencing
 const S3_BUCKET = process.env.S3_BUCKET || "image-dev.edji.it"
+console.log(process.env.AWS_ACCESS_KEY_ID)
+console.log(process.env.AWS_SECRET_ACCESS_KEY)
 const app = express()
 const PORT = process.env.PORT || 4250
 
