@@ -1,0 +1,65 @@
+# Sunstreaker (Edji File Upload Server)
+
+## Quick Start
+
+### Install Homebrew
+
+```bash
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+### Install Environment and Package Manager
+
+```bash
+brew install node yarn
+```
+
+### Clone the repo
+
+Clone with HTTPS: `coming soon`
+
+Clone with SSH: `coming soon`
+
+### Install More Packages
+
+```bash
+yarn install
+yarn global add mocha
+```
+
+## Heroku
+
+Add the remotes
+```bash
+git remote add prod https://git.heroku.com/sunstreaker.git
+```
+
+Push to `dev` and `prod`
+```bash
+git push prod master
+```
+
+
+Swap the default Heroku CLI remote
+```bash
+git config heroku.remote dev
+git config heroku.remote prod
+```
+
+## Testing
+
+Testing is automatid with Mocha, and run with Yarn scripts.
+
+### Run the test suite against a local instance of the server
+
+Run the server from a terminal. From another terminal, run
+```bash
+yarn test
+```
+
+### Run the test suite against the Heroku services (do NOT do this please! we don't have a dev instance set up to test against)
+
+From a terminal, run
+```bash
+yarn test:dev
+```
