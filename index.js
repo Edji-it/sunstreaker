@@ -135,6 +135,9 @@ app.put('/v1/pdf', (req, res) => {
                                         reject(err)
                                     } else {
                                         resolve(`//${S3_BUCKET}/${awsPath}`)
+                                        fs.unlink([ pathToImgs, file ].join("/"), (err) => {
+                                            if (err) { console.error(err) }
+                                        })
                                     }
                                 })
                             }) 
@@ -151,6 +154,7 @@ app.put('/v1/pdf', (req, res) => {
         })
         .catch((err) => {
             console.error(err)
+            // we might need to come up with a fancy way to handle partial rejection...
             res.status(500).send(err)
         })
 })
