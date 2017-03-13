@@ -8,7 +8,6 @@ const aws = require('aws-sdk')
 const lib = require('./lib')
 
 aws.config.update({region: 'us-west-2'}) // update the aws region we're referencing
-const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
 const S3_BUCKET = process.env.S3_BUCKET || "image-dev.edji.it"
 const app = express()
 const PORT = process.env.PORT || 4250
@@ -77,6 +76,7 @@ app.put('/v1/convert-pdf', (req, res) => {
 })
 
 app.put('/v1/pdf', (req, res) => {
+    const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
