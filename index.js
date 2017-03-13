@@ -117,9 +117,6 @@ app.put('/v1/pdf', (req, res) => {
             files.forEach((file) => {
                 promises.push(
                     new Promise((resolve, reject) => {
-                        console.log("running promise")
-                        console.log(file.substr(0, fileName.length))
-                        console.log(fileName)
                         // test if the file is one of the ones created by this call by checking the name
                         if (file.substr(0, fileName.length) === fileName) {
                             console.log(file)
@@ -135,7 +132,6 @@ app.put('/v1/pdf', (req, res) => {
                                     if (err) {
                                         reject(err)
                                     } else {
-                                        console.log(awsPath)
                                         resolve(awsPath)
                                     }
                                 })
@@ -147,6 +143,7 @@ app.put('/v1/pdf', (req, res) => {
             return promises
         })
         .then((promises) => {
+            console.log("got the promises")
             Q.all(promises).done((files) => {
                 console.log(files)
                 res.status(202).send(files)
