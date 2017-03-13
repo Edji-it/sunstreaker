@@ -16,9 +16,9 @@ brew install node yarn
 
 ### Clone the repo
 
-Clone with HTTPS: `coming soon`
+Clone with HTTPS: `https://github.com/codiak/sunstreaker.git`
 
-Clone with SSH: `coming soon`
+Clone with SSH: `git@github.com:codiak/sunstreaker.git`
 
 ### Install More Packages
 
