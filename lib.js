@@ -12,6 +12,7 @@ module.exports = {
             console.log("pdf", pdf)
             // write the req.body (which is a buffer created by body-parser) to the opened file
             fs.write(fd, pdf, (err, written, buff) => {
+                console.log("we are done reading the file")
                 if (err) {
                     reject(err)
                 } else {
