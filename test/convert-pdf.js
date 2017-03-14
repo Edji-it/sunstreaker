@@ -21,11 +21,9 @@ describe("PDF upload", () => {
           .set('content-type', 'application/pdf')
           .send(data)
           .end((err, res) => {
-            res.should.have.status(201)
+            res.should.have.status(202)
             res.body.should.not.have.property("errors")
-            res.body.should.have.property("pages")
-            res.body.pages.should.be.instanceOf(Array)
-            res.body.pages.length.should.be.equal(1)
+            res.body.should.have.property("uuid")
 
             done()
           })

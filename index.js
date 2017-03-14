@@ -65,17 +65,29 @@ app.put('/v1/pdf', (req, res) => {
         return res.status(400).send({ errors: { typeError: "Content-Type not set to application/pdf" } })
     }
 
+    if (!req.body) {
+        res.status(400).send()
+        return
+    }
+
     const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
     let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
     let pathToImgs = [ savePath, "img" ].join("/")
+    let placeholder = { converted: false }
+    let statusLocation = `pdf/${fileName}/spark.json`
 
-    if (!req.body && req.body) {
-        res.status(400).send()
-        return
-    }
+
+    s3.putObject({
+        Bucket: S3_BUCKET,
+        Key: statusLocation,
+        Body: JSON.stringify(placeholder),
+        ACL: 'public-read'
+    }, (err, data) => {
+        res.status(202).send({ uuid: fileName })
+    })
 
     lib.savePdf(pdfPath, req.body)
         .then((written, buff) => { // don't see a reason to use the buffer again, but maybe someday we will so I left it
@@ -134,7 +146,37 @@ app.put('/v1/pdf', (req, res) => {
         })
         .then((promises) => {
             Q.all(promises).done((files) => {
-                res.status(201).send({ pages: files })
+                let statusUpdate = {
+                    pages: files,
+                    converted: true
+                }
+
+                // overwrite the json object that the client will be checking for with the file urls
+                s3.putObject({
+                    Bucket: S3_BUCKET,
+                    Key: statusLocation,
+                    Body: JSON.stringify(statusUpdate),
+                    ACL: 'public-read'
+                }, (err, res) => {
+                    if (err) {
+                        console.error(err)
+                        // we will retry
+                        s3.putObject({
+                            Bucket: S3_BUCKET,
+                            Key: statusLocation,
+                            Body: JSON.stringify(statusUpdate),
+                            ACL: 'public-read'
+                        }, (err, res) => {
+                            if (err) {
+                                console.error("second put error")
+                                console.error(err)
+                            }
+                        })
+                    } else {
+                        console.log(`//${S3_BUCKET}/${statusLocation}`)
+                    }
+                })
+
                 // also clean up the pdf - now we should have cleaned out all the saved images and the pdf
                 fs.unlink(pdfPath, (err) => {
                     if (err) { console.error(err) }
