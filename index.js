@@ -76,7 +76,7 @@ app.put('/v1/pdf', (req, res) => {
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
     let pathToImgs = [ savePath, "img" ].join("/")
-    let placeholder = { converted: false, requested: Date.now() }
+    let placeholder = { converted: false, requestedTime: Date.now() }
     let statusLocation = `pdf/${fileName}/spark.json`
 
 
@@ -153,7 +153,7 @@ app.put('/v1/pdf', (req, res) => {
                     uuid: fileName,
                     pages: files,
                     converted: true,
-                    updated: Date.now()
+                    updatedTime: Date.now()
                 }
 
                 // overwrite the json object that the client will be checking for with the file urls
@@ -195,7 +195,7 @@ app.put('/v1/pdf', (req, res) => {
                 uuid: fileName,
                 converted: false,
                 error: err,
-                updated: Date.now()
+                updatedTime: Date.now()
             }
 
             s3.putObject({
