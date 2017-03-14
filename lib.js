@@ -24,5 +24,35 @@ module.exports = {
             }
             })
         })
+    },
+    // convertPage: function(pdfPath, imgPath, pageNum) {
+    //     return new Promise((resolve, reject) => {
+    //         im.convert(['-density', '144', `${pdfPath}[${pageNum}]`, `${imgPath}-${pageNum}.jpg`], (err, stdout) => {
+    //             // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
+    //             if (err) { reject(err) }
+    //             else { convertPage(pdfPath, imgPath, pageNum) }
+    //         })
+    //     })
+    // },
+    // convertPage: function(pdfPath, imgPath, pageNum) {
+    //     return new Promise((resolve, reject) => {
+    //         im.convert(['-density', '144', `${pdfPath}[${pageNum}]`, `${imgPath}-${pageNum}.jpg`], (err, stdout) => {
+    //             // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
+    //             if (err) { reject(err) }
+    //             else { resolve() }
+    //         })
+    //     })
+    // },
+
+    // recursive function that repeats everything inside until it encounters an error
+    convertPage: function(pdfPath, imgPath, pageNum, callback) {
+        im.convert(['-density', '144', `${pdfPath}[${pageNum}]`, `${imgPath}-${pageNum}.jpg`], (err, stdout) => {
+            // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
+            if (err) { callback(pageNum) }
+            else {
+                pageNum ++
+                this.convertPage(pdfPath, imgPath, pageNum, callback)
+            }
+        })
     }
 }
