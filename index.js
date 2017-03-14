@@ -147,6 +147,7 @@ app.put('/v1/pdf', (req, res) => {
         .then((promises) => {
             Q.all(promises).done((files) => {
                 let statusUpdate = {
+                    uuid: fileName,
                     pages: files,
                     converted: true
                 }
