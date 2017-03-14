@@ -145,7 +145,10 @@ app.put('/v1/pdf', (req, res) => {
             return promises
         })
         .then((promises) => {
+            // execute all of the promises returned by the last sequence in the chain
             Q.all(promises).done((files) => {
+
+                // construct new object, which will overwrite the placeholder file
                 let statusUpdate = {
                     uuid: fileName,
                     pages: files,
@@ -161,7 +164,7 @@ app.put('/v1/pdf', (req, res) => {
                 }, (err, res) => {
                     if (err) {
                         console.error(err)
-                        // we will retry
+                        // we will retry once if there was an error the first time
                         s3.putObject({
                             Bucket: S3_BUCKET,
                             Key: statusLocation,
@@ -186,8 +189,20 @@ app.put('/v1/pdf', (req, res) => {
         })
         .catch((err) => {
             console.error(err)
-            // we might need to come up with a fancy way to handle partial rejection...
-            res.status(500).send(err)
+
+            let failedStatus = {
+                uuid: fileName,
+                converted: false,
+                error: err
+            }
+
+            s3.putObject({
+                Bucket: S3_BUCKET,
+                Key: statusLocation,
+                Body: JSON.stringify(failedStatus),
+                ACL: 'public-read'
+            }, (err, res) => {
+            })
         })
 })
 
