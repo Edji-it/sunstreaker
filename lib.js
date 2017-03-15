@@ -27,25 +27,6 @@ module.exports = {
             })
         })
     },
-    // convertPage: function(pdfPath, imgPath, pageNum) {
-    //     return new Promise((resolve, reject) => {
-    //         im.convert(['-density', '144', `${pdfPath}[${pageNum}]`, `${imgPath}-${pageNum}.jpg`], (err, stdout) => {
-    //             // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
-    //             if (err) { reject(err) }
-    //             else { convertPage(pdfPath, imgPath, pageNum) }
-    //         })
-    //     })
-    // },
-    // convertPage: function(pdfPath, imgPath, pageNum) {
-    //     return new Promise((resolve, reject) => {
-    //         im.convert(['-density', '144', `${pdfPath}[${pageNum}]`, `${imgPath}-${pageNum}.jpg`], (err, stdout) => {
-    //             // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
-    //             if (err) { reject(err) }
-    //             else { resolve() }
-    //         })
-    //     })
-    // },
-
     // recursive function that repeats everything inside until it encounters an error
     convertPage: function(pdfPath, imgPath, pageNum, callback) {
         let resultPath = `${imgPath}-${pageNum}.jpg`
@@ -53,12 +34,13 @@ module.exports = {
             // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
             if (err) { callback(pageNum) }
             else {
-                pageNum ++
+                pageNum ++ // set up for moving on to the next page
                 this.convertPage(pdfPath, imgPath, pageNum, callback)
             }
         })
     },
     putToS3: function(imgPath, dirName, fileName) {
+        // read the file in, which presumably has the pdf's image
         return new Promise((resolve, reject) => {
             fs.readFile(imgPath, (err, imgBuff) => {
                 if (err) { throw err }
@@ -66,6 +48,7 @@ module.exports = {
             })
         })
         .then((buff) => {
+            // send the image to s3
             let awsPath = `pdf/${dirName}/${fileName}`
             return new Promise((resolve, reject) => {
                 aws.s3.putObject({
@@ -80,6 +63,7 @@ module.exports = {
             })
         })
         .then((awsPath) => {
+            // delete the image on local storage and resolve with the path to the image in AWS
             return new Promise((resolve, reject) => {
                 fs.unlink(imgPath, (err) => {
                     if (err) { throw err }
