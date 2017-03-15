@@ -28,47 +28,54 @@ module.exports = {
         })
     },
     // recursive function that repeats everything inside until it encounters an error
-    convertPage: function(pdfPath, imgPath, pageNum, callback) {
+    convertPage: function(savePath, fileId, pageNum, callback) {
+        let imgPath = savePath + "/" + fileId
         let resultPath = `${imgPath}-${pageNum}.jpg`
-        im.convert(['-density', '144', `${pdfPath}[${pageNum}]`, resultPath ], (err, stdout) => {
+        im.convert(['-density', '144', `${savePath}/${fileId}.pdf[${pageNum}]`, resultPath ], (err, stdout) => {
             // we resolve with false to tell the running process that the page was not found - we are assuming that this is the reason for the error
             if (err) { callback(pageNum) }
             else {
                 pageNum ++ // set up for moving on to the next page
-                this.convertPage(pdfPath, imgPath, pageNum, callback)
+                this.uploadFile(resultPath, )
+
+                this.convertPage(savePath, fileId, pageNum, callback)
             }
         })
     },
-    putToS3: function(imgPath, dirName, fileName) {
+    // reads the file, puts it to S3, cleans up the file and resolves with the path to asset in AWS
+    uploadFile: function(resultsPath, fileId, fileName) {
         // read the file in, which presumably has the pdf's image
         return new Promise((resolve, reject) => {
-            fs.readFile(imgPath, (err, imgBuff) => {
+            fs.readFile(resultsPath, (err, imgBuff) => {
                 if (err) { throw err }
                 else { resolve(imgBuff) }
             })
         })
         .then((buff) => {
             // send the image to s3
-            let awsPath = `pdf/${dirName}/${fileName}`
+            // eventually plan on doing better error handling for the PUT call
+            return this.putToS3(`pdf/${fileId}/${fileName}`, buff)
+        })
+        .then((awsPath) => {
+            // delete the image on local storage and resolve with the path to the image in AWS
             return new Promise((resolve, reject) => {
-                aws.s3.putObject({
-                    Bucket: aws.S3_BUCKET,
-                    Key: awsPath,
-                    Body: imgBuff,
-                    ACL: 'public-read'
-                }, (err, res) => {
+                fs.unlink(resultsPath, (err) => {
                     if (err) { throw err }
                     else { resolve(awsPath) }
                 })
             })
         })
-        .then((awsPath) => {
-            // delete the image on local storage and resolve with the path to the image in AWS
-            return new Promise((resolve, reject) => {
-                fs.unlink(imgPath, (err) => {
-                    if (err) { throw err }
-                    else { resolve(awsPath) }
-                })
+    },
+    putToS3: function(awsPath, data) {
+        return new Promise((resolve, reject) => {
+            aws.s3.putObject({
+                Bucket: aws.S3_BUCKET,
+                Key: awsPath,
+                Body: data,
+                ACL: 'public-read'
+            }, (err, res) => {
+                if (err) { throw err }
+                else { resolve(awsPath) }
             })
         })
     }

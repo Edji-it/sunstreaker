@@ -1,7 +1,4 @@
 {
-  "CONVERT_PDF": {
-    "LOCAL_STORAGE": "./content/output"
-  },
   "Testing": {
       "url": "http://sunstreaker.edji.it"
   }

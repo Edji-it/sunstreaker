@@ -65,7 +65,7 @@ app.put('/v1/pdf', (req, res) => {
         return
     }
 
-    let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
+    let savePath = "./content/output"
     let fileName = uuid.v4()
     let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
     let imgPath = [ savePath, "img", fileName ].join("/") + ".jpg"
@@ -216,13 +216,15 @@ app.put('/v1/pdf-big', (req, res) => {
     }
 
     const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
-    let savePath = config.get("CONVERT_PDF").LOCAL_STORAGE
-    let fileName = uuid.v4()
-    let pdfPath = [ savePath, "pdf", fileName ].join("/") + ".pdf"
-    let imgPath = [ savePath, "img", fileName ].join("/")
-    let pathToImgs = [ savePath, "img" ].join("/")
+    let fileId = uuid.v4()
+    let savePath = "./content/output/" + fileId
+    if (!fs.existsSync(savePath)) {
+        fs.mkdirSync(savePath)
+    }
+    let pdfPath = savePath + "/" + fileId + ".pdf"
+    let imgPath = savePath + "/" + fileId
     let placeholder = { converted: false, requestedTime: Date.now() }
-    let statusLocation = `pdf/${fileName}/spark.json`
+    let statusLocation = `pdf/${fileId}/spark.json`
     let files = []
 
 
@@ -240,7 +242,7 @@ app.put('/v1/pdf-big', (req, res) => {
     lib.savePdf(pdfPath, req.body)
         .then((written, buff) => {
             return new Promise((resolve, reject) => {
-                lib.convertPage(pdfPath, imgPath, 0, resolve)
+                lib.convertPage(pdfPath, fileId, 0, resolve)
             })
         })
         .then((pageCount) => {
