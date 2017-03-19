@@ -215,7 +215,7 @@ app.put('/v1/pdf-big', (req, res) => {
         return
     }
 
-    const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
+    // const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY from the environment as credentials
     let fileId = uuid.v4()
     let savePath = "./content/output/" + fileId
     if (!fs.existsSync(savePath)) {
@@ -242,11 +242,11 @@ app.put('/v1/pdf-big', (req, res) => {
     lib.savePdf(pdfPath, req.body)
         .then((written, buff) => {
             return new Promise((resolve, reject) => {
-                lib.convertPage(pdfPath, fileId, 0, resolve)
+                lib.convertPage(savePath, fileId, 0, [], resolve)
             })
         })
-        .then((pageCount) => {
-            res.status(202).send({ success: true, pageCount: pageCount })
+        .then((pages) => {
+            res.status(202).send({ success: true, pages: pages })
         })
         .catch((err) => {
             console.error(err)

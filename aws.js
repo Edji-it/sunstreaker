@@ -14,5 +14,5 @@ const s3 = new aws.S3() // aws.S3 automatically grabs AWS_ACCESS_KEY_ID and AWS_
 module.exports = {
   aws: aws,
   s3: s3,
-  S3_BUCKET = S3_BUCKET
+  S3_BUCKET: S3_BUCKET
 }
