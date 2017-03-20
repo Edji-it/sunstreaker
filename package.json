@@ -7,7 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index",
     "test": "NODE_ENV=test mocha --timeout 10000",
-    "test:dev": "NODE_ENV=dev mocha --timeout 10000"
+    "test:dev": "NODE_ENV=dev mocha --timeout 30000" //might have to change this timeout value depending on how big a file you're trying to upload'
   },
   "license": "MIT",
   "dependencies": {
