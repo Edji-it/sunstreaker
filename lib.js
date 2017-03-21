@@ -65,11 +65,12 @@ module.exports = {
             return this.putToS3(`pdf/${fileId}/${fileName}`, buff)
         })
         .then((awsPath) => {
+            let absolutePath = "//image-dev.edji.it/" + awsPath
             // delete the image on local storage and resolve with the path to the image in AWS
             return new Promise((resolve, reject) => {
                 fs.unlink(resultsPath, (err) => {
                     if (err) { throw err }
-                    else { resolve(awsPath) }
+                    else { resolve(absolutePath) }
                 })
             })
         })
