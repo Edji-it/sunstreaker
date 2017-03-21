@@ -32,17 +32,13 @@ module.exports = {
         if (!filePaths) { let filePaths = [] } // this will be the returned array of AWS file paths
         let fileName = `${fileId}-${pageNum}.jpg`
         let resultPath = `${savePath}/${fileName}`
-        console.log("converting", resultPath)
         im.convert(['-density', '144', `${savePath}/${fileId}.pdf[${pageNum}]`, resultPath ], (err, stdout) => {
             // when an error occurs, we assume that's because we hit the end of the file, and so we resolve with the created paths
             if (err) {
-                console.log("caught the error")
-                console.log(filePaths)
                 fs.unlink(`${savePath}/${fileId}.pdf`, (err) => { /** do nothing */ }) // we'll just let this happen and move on with our lives
                 callback(filePaths)
             }
             else {
-                console.log("converted a page")
                 pageNum ++ // set up for moving on to the next page
                 this.uploadFile(resultPath, fileId, fileName)
                     .then((filePath) => {
@@ -66,12 +62,9 @@ module.exports = {
         .then((buff) => {
             // send the image to s3
             // eventually plan on doing better error handling for the PUT call
-            console.log("putting to s3")
             return this.putToS3(`pdf/${fileId}/${fileName}`, buff)
         })
         .then((awsPath) => {
-            console.log("got from s3")
-            console.log(awsPath)
             // delete the image on local storage and resolve with the path to the image in AWS
             return new Promise((resolve, reject) => {
                 fs.unlink(resultsPath, (err) => {
