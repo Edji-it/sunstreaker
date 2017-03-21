@@ -227,14 +227,32 @@ app.put('/v1/pdf', (req, res) => {
     let statusLocation = `pdf/${fileId}/spark.json`
     let files = []
 
-    aws.s3.putObject({
-        Bucket: aws.S3_BUCKET,
-        Key: statusLocation,
-        Body: JSON.stringify(placeholder),
-        ACL: 'public-read'
-    }, (err, data) => {
-        res.status(202).send({ uuid: fileId })
-    })
+    // aws.s3.putObject({
+    //     Bucket: aws.S3_BUCKET,
+    //     Key: statusLocation,
+    //     Body: JSON.stringify(placeholder),
+    //     ACL: 'public-read'
+    // }, (err, data) => {
+    //     res.status(202).send({ uuid: fileId })
+    // })
+
+    lib.putToS3(statusLocation, JSON.stringify(placeholder))
+        .then(() => {
+
+            res.status(202).send({ uuid: fileId })
+        })
+        .catch((err) => {
+            console.log(err)
+            res.status(500).send()
+            
+            let failedStatus = {
+                uuid: fileName,
+                converted: false,
+                error: err,
+                updatedTime: Date.now()
+            }
+            lib.putToS3(statusLocation, failedStatus)
+        })
 
     console.log("checking pdf")
 
@@ -244,11 +262,28 @@ app.put('/v1/pdf', (req, res) => {
                 lib.convertPage(savePath, fileId, 0, [], resolve)
             })
         })
-        // .then((pages) => {
-        //     res.status(202).send({ success: true, pages: pages })
-        // })
+        .then((pages) => {
+            let statusUpdate = {
+                uuid: fileId,
+                pages: files,
+                converted: true,
+                updatedTime: Date.now()
+            }
+
+            return lib.putToS3(statusLocation, JSON.stringify(statusUpdate))
+        })
+        .then(() => {
+            console.log("done converting pdf")
+        })
         .catch((err) => {
             console.error(err)
+            let failedStatus = {
+                uuid: fileName,
+                converted: false,
+                error: err,
+                updatedTime: Date.now()
+            }
+            lib.putToS3(statusLocation, failedStatus)
         })
 })
 
