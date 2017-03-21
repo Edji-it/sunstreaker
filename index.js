@@ -244,7 +244,7 @@ app.put('/v1/pdf', (req, res) => {
         .catch((err) => {
             console.log(err)
             res.status(500).send()
-            
+
             let failedStatus = {
                 uuid: fileName,
                 converted: false,
@@ -272,8 +272,8 @@ app.put('/v1/pdf', (req, res) => {
 
             return lib.putToS3(statusLocation, JSON.stringify(statusUpdate))
         })
-        .then(() => {
-            console.log("done converting pdf")
+        .then((awsPath) => {
+            console.log("done converting pdf at " + awsPath)
         })
         .catch((err) => {
             console.error(err)
