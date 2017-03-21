@@ -227,6 +227,15 @@ app.put('/v1/pdf', (req, res) => {
     let statusLocation = `pdf/${fileId}/spark.json`
     let files = []
 
+    aws.s3.putObject({
+        Bucket: aws.S3_BUCKET,
+        Key: statusLocation,
+        Body: JSON.stringify(placeholder),
+        ACL: 'public-read'
+    }, (err, data) => {
+        res.status(202).send({ uuid: fileId })
+    })
+
     console.log("checking pdf")
 
     lib.savePdf(pdfPath, req.body)
@@ -235,9 +244,9 @@ app.put('/v1/pdf', (req, res) => {
                 lib.convertPage(savePath, fileId, 0, [], resolve)
             })
         })
-        .then((pages) => {
-            res.status(202).send({ success: true, pages: pages })
-        })
+        // .then((pages) => {
+        //     res.status(202).send({ success: true, pages: pages })
+        // })
         .catch((err) => {
             console.error(err)
         })
