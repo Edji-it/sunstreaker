@@ -265,7 +265,7 @@ app.put('/v1/pdf', (req, res) => {
         .then((pages) => {
             let statusUpdate = {
                 uuid: fileId,
-                pages: files,
+                pages: pages,
                 converted: true,
                 updatedTime: Date.now()
             }
